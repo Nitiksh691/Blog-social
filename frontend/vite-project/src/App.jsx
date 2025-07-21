@@ -1,4 +1,3 @@
-// src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home.jsx';
@@ -14,8 +13,14 @@ import Dashboard from './pages/Dashboard.jsx';
 import useAuthStore from './auth/authStore.jsx';
 import AdminUsers from './pages/AdminUsers.jsx';
 
+import ShortPostCreate from './pages/CreateShortPost.jsx';
+import CreateShortPost from './pages/CreateShortPost.jsx';
+
+
+import ShortPostList from './pages/ShortPostList';
+import ShortPostDetail from './pages/ShortPostDetail';
 const App = () => {
-  const token = useAuthStore((state) => state.token); // 👈 This is reactive
+  const token = useAuthStore((state) => state.token);
 
   return (
     <Router>
@@ -43,25 +48,35 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/users/:userId" element={<UserProfile />} />
+        <Route path="/shortpost/create" element={<CreateShortPost />} />
+        <Route path='/shortposts' element={<ShortPostList/>}  />
 
-        {/* 🔒 Dashboard protected by login check */}
+<Route path="/shortposts" element={<ShortPostList />} />
+<Route path="/shortposts/:id" element={<ShortPostDetail />} />
+
+
+        <Route
+          path="/shortpost/create"
+          element={
+            <ProtectedRoute>
+              <ShortPostCreate />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/dashboard"
-          element={token ? <Dashboard /> : <Navigate to="/login" />}
+          element={
+            token ? <Dashboard /> : <Navigate to="/login" />
+          }
         />
-        {/* <Route path="/users/all" element={<ProtectedRoute><AdminUsers /></ProtectedRoute>} /> */}
         <Route
-  path="/users/all"
-  element={
-    <ProtectedRoute>
-      <AdminUsers />
-    </ProtectedRoute>
-  }
-/>
-
-
-
-        {/* ❌ 404 fallback */}
+          path="/users/all"
+          element={
+            <ProtectedRoute>
+              <AdminUsers />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="*"
           element={<div className="p-4 text-center text-xl">404 - Page Not Found</div>}
